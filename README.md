@@ -1,2 +1,2 @@
 # gopi
-Create APIs using golang and mysql
+Autogenerates APIs my provide a JSON schema.
