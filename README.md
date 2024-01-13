@@ -5,7 +5,7 @@
 1. **Data Source**
     - MySQL Connection String
 
-2. **API JSON Schema **
+2. **API JSON Schema**
       - API URL
       - Payload Schema
       - Output Schema
