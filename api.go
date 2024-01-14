@@ -34,8 +34,8 @@ func (g GinAPIService) Handle(method, path string, handler gin.HandlerFunc) {
 
 // API defines the structure for an API object.
 type API struct {
-	path   string
-	method string
+	Path   string // Making the 'Path' field public
+	Method string // Making the 'Method' field public
 }
 
 // GenerateAPI takes an API object containing properties such as path, method, etc., and an APIService object.
@@ -43,11 +43,11 @@ type API struct {
 // For example, it adds APIService.Handle for the provided method.
 func GenerateAPI(api interface{}, service APIService) {
 	// Retrieve the method and path from the API object; default to "GET" if not provided.
-	method := api.(API).method
+	method := api.(API).Method
 	if method == "" {
 		method = "GET"
 	}
-	path := api.(API).path
+	path := api.(API).Path
 	if path == "" {
 		path = APIPath
 	}
@@ -61,9 +61,9 @@ func generateHandler(api interface{}) gin.HandlerFunc {
 	// Implement the handler logic based on the API object.
 	return func(c *gin.Context) {
 		// Customize the handler logic here based on the provided API object.
-		// You can access the API object properties such as api.(API).path, api.(API).method, etc.
+		// You can access the API object properties such as api.(API).Path, api.(API).Method, etc.
 		c.JSON(200, gin.H{
-			"message": "Handler for " + api.(API).method + " " + api.(API).path,
+			"message": "Handler for " + api.(API).Method + " " + api.(API).Path,
 		})
 	}
 }

@@ -27,8 +27,8 @@ func TestGenerateAPI(t *testing.T) {
 
 	// Create an instance of the API object for testing
 	testAPI := API{
-		path:   "/test",
-		method: "POST",
+		Path:   "/test",
+		Method: "POST",
 	}
 
 	// Call GenerateAPI with the mock service
