@@ -5,10 +5,21 @@ RestQL is a library that automatically generates REST APIs based on the provided
 ## Configuration
 
 1. **Data Source**
-    - Database Connection String
 
-2. **API Schema**
-   - API URL
-   - Payload Schema
-   - Output Schema
+   - Database Connection String
    - Database Query Template
+      - Template name
+      - Input schema for validation
+
+2. **API Schema** 
+
+   A JSON Schema designed to specify the properties of a generated API. It encompasses key attributes, including:
+   - API path
+   - HTTP method
+   - Input schema for defining and validating the structure of the API payload
+   - Datasource template selection
+
+
+
+
+
