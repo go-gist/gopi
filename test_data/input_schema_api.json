@@ -1,0 +1,9 @@
+[
+  {
+    "path": "/foo",
+    "method":"POST"
+  },
+  {
+    "path": "/bar"
+  }
+]
