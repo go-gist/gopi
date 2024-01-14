@@ -1,5 +1,6 @@
 # RestQL
 [![CodeQL](https://github.com/gogean/restql/actions/workflows/codeql.yml/badge.svg)](https://github.com/gogean/restql/actions/workflows/codeql.yml)
+
 RestQL is a library that automatically generates REST APIs based on the provided configuration. Think of this library's API as a configuration itself.
 
 ## Configuration
