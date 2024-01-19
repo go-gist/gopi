@@ -1,59 +1,49 @@
-// restql.go
+// api.go
 
 package restql
 
 import (
+	"errors"
+
 	"github.com/gin-gonic/gin"
 )
 
-// APIPath is a constant representing the default API path.
-const APIPath = "/api"
-
 // APIService defines the interface for a service that can handle API requests.
 type APIService interface {
-	Handle(method, path string, handler gin.HandlerFunc)
-}
-
-// GinAPIService is a concrete implementation of the APIService interface using the Gin Engine.
-type GinAPIService struct {
-	Engine *gin.Engine
-}
-
-// Handle implements the Handle method of the APIService interface.
-func (g GinAPIService) Handle(method, path string, handler gin.HandlerFunc) {
-	switch method {
-	case "GET":
-		g.Engine.GET(path, handler)
-	case "POST":
-		g.Engine.POST(path, handler)
-	// Add more cases for other HTTP methods if needed.
-	default:
-		// Handle unsupported methods if necessary.
-	}
+	Handle(method, path string, handler gin.HandlerFunc) error
 }
 
 // API defines the structure for an API object.
 type API struct {
-	Path   string // Making the 'Path' field public
-	Method string // Making the 'Method' field public
+	Path   string
+	Method string
 }
 
 // GenerateAPI takes an API object containing properties such as path, method, etc., and an APIService object.
-// It adds a handler specific to the method (defaulting to GET if not provided).
-// For example, it adds APIService.Handle for the provided method.
-func GenerateAPI(api interface{}, service APIService) {
+func GenerateAPI(api interface{}, service APIService) error {
 	// Retrieve the method and path from the API object; default to "GET" if not provided.
 	method := api.(API).Method
-	if method == "" {
-		method = "GET"
-	}
 	path := api.(API).Path
-	if path == "" {
-		path = APIPath
+
+	// Validate the API object
+	if method == "" {
+		return errors.New("missing path in API object")
 	}
 
 	// Call the Handle method on APIService for the specified HTTP method.
-	service.Handle(method, path, generateHandler(api))
+	return service.Handle(method, path, generateHandler(api))
+}
+
+// GenerateAPIs takes an array of API objects and an APIService object,
+// and generates handlers for each API using the provided APIService.
+func GenerateAPIs(apis []API, service APIService) error {
+	for _, api := range apis {
+		err := GenerateAPI(api, service)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 // generateHandler is a helper function to generate the appropriate handler function based on the API object.
