@@ -8,21 +8,25 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// GinAPIService is a concrete implementation of the APIService interface using the Gin Engine.
 type GinAPIService struct {
 	Engine *gin.Engine
 }
 
-// Handle implements the Handle method of the APIService interface.
 func (g *GinAPIService) Handle(method, path string, handler gin.HandlerFunc) error {
-	switch method {
-	case "GET":
-		g.Engine.GET(path, handler)
-	case "POST":
-		g.Engine.POST(path, handler)
-	default:
-		return errors.New("unsupported HTTP method")
+	methodMap := map[string]func(string, ...gin.HandlerFunc) gin.IRoutes{
+		"GET":     g.Engine.GET,
+		"POST":    g.Engine.POST,
+		"PUT":     g.Engine.PUT,
+		"PATCH":   g.Engine.PATCH,
+		"DELETE":  g.Engine.DELETE,
+		"OPTIONS": g.Engine.OPTIONS,
+		"HEAD":    g.Engine.HEAD,
 	}
 
-	return nil
+	if methodFunc, exists := methodMap[method]; exists {
+		methodFunc(path, handler)
+		return nil
+	}
+
+	return errors.New("unsupported HTTP method")
 }

@@ -1,60 +1,51 @@
-// restql_test.go
+// api_gin_test.go
 
 package restql
 
 import (
+	"errors"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
 	"github.com/gin-gonic/gin"
-	"github.com/stretchr/testify/assert"
 )
 
-func TestGinAPIService_Handle(t *testing.T) {
-	// Set Gin to release mode during testing
+func TestHandle(t *testing.T) {
 	gin.SetMode(gin.ReleaseMode)
+	ginAPI := GinAPIService{Engine: gin.New()}
 
-	tests := []struct {
-		name   string
-		method string
-		path   string
-	}{
-		{name: "Test GET request", method: "GET", path: "/test-get"},
-		{name: "Test POST request", method: "POST", path: "/test-post"},
+	testHandler := func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{"message": "Test Handler"})
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			// Create a new Gin engine for testing
-			engine := gin.New()
+	supportedMethods := []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "HEAD"}
+	for _, method := range supportedMethods {
+		err := ginAPI.Handle(method, "/test", testHandler)
 
-			// Create a GinAPIService instance
-			apiService := &GinAPIService{
-				Engine: engine,
-			}
+		if err != nil {
+			t.Errorf("Expected no error for method %s, got: %v", method, err)
+		}
 
-			// Define a sample handler function for testing
-			sampleHandler := func(c *gin.Context) {
-				c.JSON(http.StatusOK, gin.H{"message": "success"})
-			}
+		req, _ := http.NewRequest(method, "/test", nil)
+		resp := httptest.NewRecorder()
+		ginAPI.Engine.ServeHTTP(resp, req)
 
-			// Test handling request
-			apiService.Handle(tt.method, tt.path, sampleHandler)
+		if resp.Code != http.StatusOK {
+			t.Errorf("Expected status code %d for method %s, got: %d", http.StatusOK, method, resp.Code)
+		}
 
-			// Create a test request
-			req, err := http.NewRequest(tt.method, tt.path, nil)
-			assert.NoError(t, err)
+		expectedBody := `{"message":"Test Handler"}`
+		if resp.Body.String() != expectedBody {
+			t.Errorf("Expected response body %s for method %s, got: %s", expectedBody, method, resp.Body.String())
+		}
+	}
 
-			// Create a response recorder
-			w := httptest.NewRecorder()
+	unsupportedMethod := "INVALID"
+	err := ginAPI.Handle(unsupportedMethod, "/test", testHandler)
 
-			// Perform the request
-			engine.ServeHTTP(w, req)
-
-			// Assert the status code and response body
-			assert.Equal(t, http.StatusOK, w.Code)
-			assert.Contains(t, w.Body.String(), "success")
-		})
+	expectedError := errors.New("unsupported HTTP method")
+	if err == nil || err.Error() != expectedError.Error() {
+		t.Errorf("Expected error %v for unsupported method, got: %v", expectedError, err)
 	}
 }
