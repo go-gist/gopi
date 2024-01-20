@@ -14,9 +14,9 @@ type APIService interface {
 }
 
 // GenerateAPI takes an API object containing properties such as path, method, etc., and an APIService object.
-func GenerateAPI(api interface{}, service APIService) error {
-	method := api.(API).Method
-	path := api.(API).Path
+func GenerateAPI(api API, service APIService) error {
+	method := api.Method
+	path := api.Path
 
 	if method == "" {
 		return errors.New("missing path in API object")
@@ -37,10 +37,14 @@ func GenerateAPIs(apis []API, service APIService) error {
 }
 
 // generateHandler is a helper function to generate the appropriate handler function based on the API object.
-func generateHandler(api interface{}) gin.HandlerFunc {
+func generateHandler(api API) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "Handler for " + api.(API).Method + " " + api.(API).Path,
-		})
+		// Use type assertion to get the API object
+		if !ok {
+			c.JSON(500, gin.H{"error": "Failed to assert API type"})
+			return
+		}
+
+		c.JSON(200, api)
 	}
 }

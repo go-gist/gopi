@@ -10,31 +10,26 @@ import (
 
 // APIConfig represents the structure of the YAML configuration file
 type APIConfig struct {
-	ParameterTemplates map[string]struct {
-		Name        string `yaml:"name"`
-		Type        string `yaml:"type"`
-		Description string `yaml:"description"`
-	} `yaml:"parameter_templates"`
 	APIs []API `yaml:"apis"`
 }
 
 // API defines the structure for an API object.
 type API struct {
-	Name        string         `yaml:"name"`
-	Path        string         `yaml:"path"`
-	Method      string         `yaml:"method"`
-	Description string         `yaml:"description"`
-	Parameters  []APIParameter `yaml:"parameters"`
+	Name        string         `yaml:"name" json:"name"`
+	Path        string         `yaml:"path" json:"path"`
+	Method      string         `yaml:"method" json:"method"`
+	Description string         `yaml:"description" json:"description"`
+	Parameters  []APIParameter `yaml:"parameters" json:"parameters"`
 }
 
 type APIParameter struct {
-	Name        string `yaml:"name"`
-	Type        string `yaml:"type"`
-	Description string `yaml:"description"`
+	Name        string `yaml:"name" json:"name"`
+	Type        string `yaml:"type" json:"type"`
+	Description string `yaml:"description" json:"description"`
 }
 
 // readConfig reads the YAML configuration file
-func ReadConfig(filename string) (*APIConfig, error) {
+func GetAPIConfig(filename string) (*APIConfig, error) {
 	file, err := os.ReadFile(filename)
 	if err != nil {
 		return nil, err
