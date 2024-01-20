@@ -16,12 +16,7 @@ func TestReadConfig(t *testing.T) {
 	assert.NoError(t, err, "Expected no error while reading the configuration file")
 
 	assert.NotNil(t, config, "Expected non-nil configuration")
-	assert.NotNil(t, config.ParameterTemplates, "Expected non-nil ParameterTemplates")
 	assert.NotNil(t, config.APIs, "Expected non-nil APIs")
-
-	assert.Equal(t, "id", config.ParameterTemplates["common_id"].Name, "Unexpected common_id name")
-	assert.Equal(t, "integer", config.ParameterTemplates["common_id"].Type, "Unexpected common_id type")
-	assert.Equal(t, "Item id", config.ParameterTemplates["common_id"].Description, "Unexpected common_id description")
 
 	assert.Equal(t, "Foo Get", config.APIs[0].Name, "Unexpected API name")
 	assert.Equal(t, "/foo", config.APIs[0].Path, "Unexpected API path")

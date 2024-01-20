@@ -39,12 +39,6 @@ func GenerateAPIs(apis []API, service APIService) error {
 // generateHandler is a helper function to generate the appropriate handler function based on the API object.
 func generateHandler(api API) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		// Use type assertion to get the API object
-		if !ok {
-			c.JSON(500, gin.H{"error": "Failed to assert API type"})
-			return
-		}
-
 		c.JSON(200, api)
 	}
 }
