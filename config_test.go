@@ -24,6 +24,7 @@ func TestReadConfig(t *testing.T) {
 	assert.Equal(t, "Get an item", config.APIs[0].Description, "Unexpected API description")
 	assert.Len(t, config.APIs[0].Parameters, 1, "Unexpected number of parameters in API")
 	assert.Equal(t, "id", config.APIs[0].Parameters[0].Name, "Unexpected parameter name in API")
+	assert.Equal(t, true, config.APIs[0].Parameters[0].Required, "Unexpected parameter name in API")
 
 	assert.Equal(t, "Foo Set", config.APIs[1].Name, "Unexpected API name")
 	assert.Equal(t, "/foo", config.APIs[1].Path, "Unexpected API path")

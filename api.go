@@ -4,6 +4,8 @@ package restql
 
 import (
 	"errors"
+	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -36,9 +38,54 @@ func GenerateAPIs(apis []API, service APIService) error {
 	return nil
 }
 
-// generateHandler is a helper function to generate the appropriate handler function based on the API object.
+func validateParameters(c *gin.Context, params []APIParameter) error {
+	// Validate parameters
+	for _, paramSpec := range params {
+		// Check if the parameter is provided
+		paramValue := c.Query(paramSpec.Name)
+
+		if paramSpec.Required && paramValue == "" {
+			return errors.New("'" + paramSpec.Name + "' is a required parameter")
+		}
+
+		// Validate based on the type only if the parameter is provided
+		if paramValue != "" {
+			switch paramSpec.Type {
+			case "integer":
+				_, err := strconv.Atoi(paramValue)
+				if err != nil {
+					return errors.New("'" + paramSpec.Name + "' must be an integer")
+				}
+			case "string":
+				// Additional string validation logic if needed
+			case "number":
+				_, err := strconv.ParseFloat(paramValue, 64)
+				if err != nil {
+					return errors.New("'" + paramSpec.Name + "' must be a number")
+				}
+			case "boolean":
+				_, err := strconv.ParseBool(paramValue)
+				if err != nil {
+					return errors.New("'" + paramSpec.Name + "' must be a boolean")
+				}
+			default:
+				return errors.New("Unsupported type: '" + paramSpec.Type + "'")
+			}
+		}
+	}
+
+	return nil
+}
+
 func generateHandler(api API) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		c.JSON(200, api)
+		// Validate parameters
+		if err := validateParameters(c, api.Parameters); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		// If all validations pass, you can proceed with handling the API logic
+		c.JSON(http.StatusOK, api)
 	}
 }

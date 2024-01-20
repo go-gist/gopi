@@ -2,6 +2,7 @@ parameter_templates:
   common_id: &common_id
     name: "id"
     type: "integer"
+    required: true
     description: "Item id"
 
 apis:

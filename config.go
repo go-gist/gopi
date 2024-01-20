@@ -26,6 +26,7 @@ type APIParameter struct {
 	Name        string `yaml:"name" json:"name"`
 	Type        string `yaml:"type" json:"type"`
 	Description string `yaml:"description" json:"description"`
+	Required    bool   `yaml:"required" json:"required"`
 }
 
 // readConfig reads the YAML configuration file
@@ -48,20 +49,11 @@ func GetAPIs(config *APIConfig) []API {
 	var apis []API
 
 	for _, apiEntry := range config.APIs {
-		api := API{
-			Path:        apiEntry.Path,
-			Method:      apiEntry.Method,
-			Description: apiEntry.Description,
-		}
+		api := API(apiEntry)
+		api.Parameters = make([]APIParameter, len(apiEntry.Parameters))
 
-		// Add parameters to the API
-		for _, paramEntry := range apiEntry.Parameters {
-			param := APIParameter{
-				Name:        paramEntry.Name,
-				Type:        paramEntry.Type,
-				Description: paramEntry.Description,
-			}
-			api.Parameters = append(api.Parameters, param)
+		for i, paramEntry := range apiEntry.Parameters {
+			api.Parameters[i] = APIParameter(paramEntry)
 		}
 
 		apis = append(apis, api)
