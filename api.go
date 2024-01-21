@@ -4,6 +4,7 @@ package restql
 
 import (
 	"errors"
+	"io"
 	"net/http"
 	"strconv"
 
@@ -85,7 +86,29 @@ func generateHandler(api API) gin.HandlerFunc {
 			return
 		}
 
+		// Retrieve query parameters from gin.Context
+		queryParams := c.Request.URL.Query()
+
+		// Try to retrieve JSON payload parameters from POST request
+		var jsonParams map[string]interface{}
+		if err := c.ShouldBindJSON(&jsonParams); err != nil && !errors.Is(err, io.EOF) {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		// Retrieve form data parameters from POST request
+		formParams := c.Request.PostForm
+
+		// Create a response object that includes API, API parameters, query parameters, JSON, and form data parameters
+		responseData := gin.H{
+			"api":        api,
+			"parameters": api.Parameters,
+			"query":      queryParams,
+			"json":       jsonParams,
+			"form":       formParams,
+		}
+
 		// If all validations pass, you can proceed with handling the API logic
-		c.JSON(http.StatusOK, api)
+		c.JSON(http.StatusOK, responseData)
 	}
 }

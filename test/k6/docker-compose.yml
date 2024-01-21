@@ -1,0 +1,13 @@
+version: '3'
+services:
+  k6:
+    image: loadimpact/k6:latest
+    volumes:
+      - ./k6.js:/k6.js
+    command: ["run", "/k6.js"]
+    networks:
+      - mynetwork
+
+networks:
+  mynetwork:
+    driver: bridge

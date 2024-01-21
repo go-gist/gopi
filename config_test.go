@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-const filename = "test_data/restql.yml"
+const filename = "./test/data/restql.yml"
 
 func TestReadConfig(t *testing.T) {
 	config, err := GetAPIConfig(filename)
