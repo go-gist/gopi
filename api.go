@@ -4,12 +4,29 @@ package restql
 
 import (
 	"errors"
-	"io"
+	"fmt"
 	"net/http"
-	"strconv"
+	"os"
 
 	"github.com/gin-gonic/gin"
+	"github.com/xeipuuv/gojsonschema"
 )
+
+// API defines the structure for an API object.
+type API struct {
+	Name        string `yaml:"name" json:"name"`
+	Path        string `yaml:"path" json:"path"`
+	Method      string `yaml:"method" json:"method"`
+	Description string `yaml:"description" json:"description"`
+
+	Input *struct {
+		Schema string `yaml:"schema" json:"schema"`
+	} `yaml:"input" json:"input"`
+
+	DB *struct {
+		Query string `yaml:"query" json:"query"`
+	} `yaml:"db" json:"db"`
+}
 
 // APIService defines the interface for a service that can handle API requests.
 type APIService interface {
@@ -39,76 +56,67 @@ func GenerateAPIs(apis []API, service APIService) error {
 	return nil
 }
 
-func validateParameters(c *gin.Context, params []APIParameter) error {
-	// Validate parameters
-	for _, paramSpec := range params {
-		// Check if the parameter is provided
-		paramValue := c.Query(paramSpec.Name)
-
-		if paramSpec.Required && paramValue == "" {
-			return errors.New("'" + paramSpec.Name + "' is a required parameter")
-		}
-
-		// Validate based on the type only if the parameter is provided
-		if paramValue != "" {
-			switch paramSpec.Type {
-			case "integer":
-				_, err := strconv.Atoi(paramValue)
-				if err != nil {
-					return errors.New("'" + paramSpec.Name + "' must be an integer")
-				}
-			case "string":
-				// Additional string validation logic if needed
-			case "number":
-				_, err := strconv.ParseFloat(paramValue, 64)
-				if err != nil {
-					return errors.New("'" + paramSpec.Name + "' must be a number")
-				}
-			case "boolean":
-				_, err := strconv.ParseBool(paramValue)
-				if err != nil {
-					return errors.New("'" + paramSpec.Name + "' must be a boolean")
-				}
-			default:
-				return errors.New("Unsupported type: '" + paramSpec.Type + "'")
-			}
-		}
+func generateResponseData(jsonParams map[string]interface{}) gin.H {
+	return gin.H{
+		"json": jsonParams,
 	}
+}
 
-	return nil
+func responseError(c *gin.Context, statusCode int, errorMessage string, params map[string]interface{}) {
+	responseData := generateResponseData(params)
+	responseData["error"] = errorMessage
+
+	c.JSON(statusCode, responseData)
 }
 
 func generateHandler(api API) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		// Validate parameters
-		if err := validateParameters(c, api.Parameters); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		var params map[string]interface{}
+
+		if err := c.ShouldBindJSON(&params); err != nil {
+			responseError(c, http.StatusBadRequest, err.Error(), params)
 			return
 		}
 
-		// Retrieve query parameters from gin.Context
-		queryParams := c.Request.URL.Query()
-
-		// Try to retrieve JSON payload parameters from POST request
-		var jsonParams map[string]interface{}
-		if err := c.ShouldBindJSON(&jsonParams); err != nil && !errors.Is(err, io.EOF) {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		// Validate JSON payload against the schema
+		err := validateJSON(params, api.Input.Schema)
+		if err != nil {
+			responseError(c, http.StatusBadRequest, err.Error(), params)
 			return
 		}
 
-		// Retrieve form data parameters from POST request
-		formParams := c.Request.PostForm
-
-		// Create a response object that includes API, API parameters, query parameters, JSON, and form data parameters
-		responseData := gin.H{
-			"api":        api,
-			"parameters": api.Parameters,
-			"query":      queryParams,
-			"json":       jsonParams,
-			"form":       formParams,
+		if api.DB != nil {
+			fmt.Println()
 		}
 
-		// If all validations pass, you can proceed with handling the API logic
+		responseData := generateResponseData(params)
 		c.JSON(http.StatusOK, responseData)
 	}
+}
+
+func validateJSON(data map[string]interface{}, schemaFilePath string) error {
+	// Read the JSON schema from the file
+	schemaContent, err := os.ReadFile(schemaFilePath)
+	if err != nil {
+		return err
+	}
+
+	loader := gojsonschema.NewStringLoader(string(schemaContent))
+	document := gojsonschema.NewGoLoader(data)
+
+	result, err := gojsonschema.Validate(loader, document)
+	if err != nil {
+		return err
+	}
+
+	if !result.Valid() {
+		// Handle validation errors
+		var errors []string
+		for _, err := range result.Errors() {
+			errors = append(errors, err.String())
+		}
+		return fmt.Errorf("JSON schema validation failed: %v", errors)
+	}
+
+	return nil
 }

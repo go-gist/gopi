@@ -10,15 +10,8 @@ apis:
     path: "/foo"
     method: "GET"
     description: "Get an item"
-    parameters:
-      - *common_id
 
   - name: "Foo Set"
     path: "/foo"
     method: "POST"
     description: "Creates a foo item"
-    parameters:
-      - *common_id
-      - name: "name"
-        type: "string"
-        description: "Item name"
