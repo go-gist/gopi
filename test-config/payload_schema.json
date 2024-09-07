@@ -11,7 +11,7 @@
       "description": "The title of the post"
     },
     "userId": {
-      "type": "string",
+      "type": "number",
       "description": "The ID of the user who created the post"
     }
   },

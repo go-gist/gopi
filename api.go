@@ -101,7 +101,7 @@ func generateHandler(api API) gin.HandlerFunc {
 
 func validateJSON(data map[string]interface{}, schemaFilePath string) error {
 	// Read the JSON schema from the file
-	schemaContent, err := os.ReadFile(schemaFilePath)
+	schemaContent, err := os.ReadFile(ConfigPath + "/" + schemaFilePath)
 	if err != nil {
 		Log.Error("Missing JSON schema", err)
 		return err

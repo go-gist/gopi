@@ -4,6 +4,7 @@ package restql
 
 import (
 	"os"
+	"path/filepath"
 
 	"gopkg.in/yaml.v2"
 )
@@ -13,9 +14,12 @@ type APIConfig struct {
 	APIs []API `yaml:"apis"`
 }
 
+var ConfigPath string
+
 // readConfig reads the YAML configuration file
 func GetAPIConfig(filename string) (*APIConfig, error) {
 	file, err := os.ReadFile(filename)
+	ConfigPath = filepath.Dir(filename)
 	if err != nil {
 		LogError("Configuration read failed", err.Error())
 		return nil, err

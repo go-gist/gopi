@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-const filename = "./test/data/restql.yml"
+const filename = "./test-config/restql.yml"
 
 func TestReadConfig(t *testing.T) {
 	// Define the expected values

@@ -7,7 +7,7 @@ import (
 
 func TestParseQueryFile(t *testing.T) {
 	// Path to the SQL template
-	path := "./test/data/foo.sql.tpl"
+	path := "./test-config/foo.sql.tpl"
 
 	// Data to be injected into the template
 	data := map[string]interface{}{
@@ -19,7 +19,7 @@ func TestParseQueryFile(t *testing.T) {
 	}
 
 	// Path to the file containing the expected output
-	expectedOutputFilePath := "./test/data/foo.sql"
+	expectedOutputFilePath := "./test-config/foo.sql"
 
 	// Read the expected output from file
 	expectedOutput, err := os.ReadFile(expectedOutputFilePath)
