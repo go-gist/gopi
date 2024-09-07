@@ -9,39 +9,39 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-// APIConfig represents the structure of the YAML configuration file
-type APIConfig struct {
-	APIs []API `yaml:"apis"`
+// apiConfig represents the structure of the YAML configuration file
+type apiConfig struct {
+	APIs []api `yaml:"apis"`
 }
 
-var ConfigPath string
+var configBasePath string
 
 // readConfig reads the YAML configuration file
-func GetAPIConfig(filename string) (*APIConfig, error) {
+func GetAPIConfig(filename string) (*apiConfig, error) {
 	file, err := os.ReadFile(filename)
-	ConfigPath = filepath.Dir(filename)
+	configBasePath = filepath.Dir(filename)
 	if err != nil {
-		LogError("Configuration read failed", err.Error())
+		logError("Configuration read failed", err.Error())
 		return nil, err
 	}
 
-	config := &APIConfig{}
+	config := &apiConfig{}
 	err = yaml.Unmarshal(file, config)
 	if err != nil {
-		LogError("Configuration parsing failed", err.Error())
+		logError("Configuration parsing failed", err.Error())
 		return nil, err
 	}
 
-	LogInfo("Configuration parsing completed", filename)
+	logInfo("Configuration parsing completed", filename)
 
 	return config, nil
 }
 
-func GetAPIs(config *APIConfig) []API {
-	var apis []API
+func GetAPIs(config *apiConfig) []api {
+	var apis []api
 
 	for _, apiEntry := range config.APIs {
-		api := API(apiEntry)
+		api := api(apiEntry)
 		apis = append(apis, api)
 	}
 

@@ -9,13 +9,13 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// MockAPIService is a mock implementation of the APIService interface for testing purposes.
+// MockAPIService is a mock implementation of the apiService interface for testing purposes.
 type MockAPIService struct {
 	HandledMethod string
 	HandledPath   string
 }
 
-// Handle is the implementation of the APIService interface for testing purposes.
+// Handle is the implementation of the apiService interface for testing purposes.
 func (m *MockAPIService) Handle(method, path string, handler gin.HandlerFunc) error {
 	m.HandledMethod = method
 	m.HandledPath = path
@@ -26,14 +26,14 @@ func TestGenerateAPI(t *testing.T) {
 	// Create an instance of MockAPIService
 	mockService := &MockAPIService{}
 
-	// Create an instance of the API object for testing
-	testAPI := API{
+	// Create an instance of the api object for testing
+	testAPI := api{
 		Path:   "/foo",
 		Method: "POST",
 	}
 
-	// Call GenerateAPI with the mock service
-	err := GenerateAPI(testAPI, mockService)
+	// Call generateAPI with the mock service
+	err := generateAPI(testAPI, mockService)
 
 	// Assert that the Handle method of the mock service was called with the correct parameters
 	assert.Equal(t, "POST", mockService.HandledMethod)
@@ -45,11 +45,11 @@ func TestGenerateAPIs_Error(t *testing.T) {
 	// Create an instance of MockAPIService
 	mockService := &MockAPIService{}
 
-	// Create an instance of the API object for testing with missing fields
-	testAPI := API{}
+	// Create an instance of the api object for testing with missing fields
+	testAPI := api{}
 
-	// Call GenerateAPIs with the mock service and an API with missing fields
-	err := GenerateAPIs([]API{testAPI}, mockService)
+	// Call GenerateAPIs with the mock service and an api with missing fields
+	err := GenerateAPIs([]api{testAPI}, mockService)
 
 	// Assert that an error is returned
 	assert.Error(t, err)
@@ -59,8 +59,8 @@ func TestGenerateAPIs_Success(t *testing.T) {
 	// Create an instance of MockAPIService
 	mockService := &MockAPIService{}
 
-	// Define a valid list of API objects for testing
-	validAPIs := []API{
+	// Define a valid list of api objects for testing
+	validAPIs := []api{
 		{
 			Path:   "/foo",
 			Method: "GET",

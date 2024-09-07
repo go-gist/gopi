@@ -10,7 +10,7 @@ func TestLoadTemplateFromFile(t *testing.T) {
 	templateFilePath := "./test-config/foo.sql.tpl"
 
 	// Test loading the template from the existing file
-	templateFromFile, err := LoadTemplateFromFile(templateFilePath)
+	templateFromFile, err := loadTemplateFromFile(templateFilePath)
 	if err != nil {
 		t.Fatalf("Failed to load template: %v", err)
 	}
@@ -29,7 +29,7 @@ func TestLoadTemplateFromFile(t *testing.T) {
 		},
 	}
 	// Execute the template with the provided data
-	output, err := ExecuteTemplate(templateFromFile, data)
+	output, err := executeTemplate(templateFromFile, data)
 	if err != nil {
 		t.Fatalf("Failed to execute template: %v", err)
 	}

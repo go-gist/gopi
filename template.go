@@ -6,9 +6,9 @@ import (
 	"text/template"
 )
 
-// LoadTemplateFromFile reads a file and returns a parsed template based on the file content.
+// loadTemplateFromFile reads a file and returns a parsed template based on the file content.
 // It takes the file path as input and returns a template or an error if the file cannot be read or parsed.
-func LoadTemplateFromFile(filePath string) (*template.Template, error) {
+func loadTemplateFromFile(filePath string) (*template.Template, error) {
 	content, err := os.ReadFile(filePath)
 	if err != nil {
 		return nil, err
@@ -17,9 +17,9 @@ func LoadTemplateFromFile(filePath string) (*template.Template, error) {
 	return template.New(filePath).Parse(string(content))
 }
 
-// ExecuteTemplate executes the provided template with the given data and returns the result as a string.
+// executeTemplate executes the provided template with the given data and returns the result as a string.
 // It uses a buffer to capture the output and returns an error if template execution fails.
-func ExecuteTemplate(tmpl *template.Template, data interface{}) (string, error) {
+func executeTemplate(tmpl *template.Template, data interface{}) (string, error) {
 	var result string
 	// Use a buffer to capture the output
 	outputBuffer := &bytes.Buffer{}

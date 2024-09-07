@@ -12,8 +12,8 @@ import (
 	"github.com/xeipuuv/gojsonschema"
 )
 
-// API defines the structure for an API object.
-type API struct {
+// api defines the structure for an api object.
+type api struct {
 	Name        string `yaml:"name" json:"name"`
 	Path        string `yaml:"path" json:"path"`
 	Method      string `yaml:"method" json:"method"`
@@ -28,35 +28,35 @@ type API struct {
 	} `yaml:"db" json:"db"`
 }
 
-// APIService defines the interface for a service that can handle API requests.
-type APIService interface {
+// apiService defines the interface for a service that can handle api requests.
+type apiService interface {
 	Handle(method, path string, handler gin.HandlerFunc) error
 }
 
-// GenerateAPI takes an API object containing properties such as path, method, etc., and an APIService object.
-func GenerateAPI(api API, service APIService) error {
+// generateAPI takes an api object containing properties such as path, method, etc., and an apiService object.
+func generateAPI(api api, service apiService) error {
 	method := api.Method
 	path := api.Path
 
 	if path == "" {
-		return errors.New("missing path in API config")
+		return errors.New("missing path in api config")
 	}
 	if method == "" {
-		return errors.New("missing method in API config")
+		return errors.New("missing method in api config")
 	}
 	return service.Handle(method, path, generateHandler(api))
 }
 
-// GenerateAPIs takes an array of API objects and an APIService object,
-// and generates handlers for each API using the provided APIService.
-func GenerateAPIs(apis []API, service APIService) error {
+// GenerateAPIs takes an array of api objects and an apiService object,
+// and generates handlers for each api using the provided apiService.
+func GenerateAPIs(apis []api, service apiService) error {
 	for _, api := range apis {
-		err := GenerateAPI(api, service)
+		err := generateAPI(api, service)
 		if err != nil {
-			LogError("Failed to generate API", api.Path, err.Error())
+			logError("Failed to generate api", api.Path, err.Error())
 			return err
 		}
-		LogInfo("Generated API", api.Path, api.Method)
+		logInfo("Generated api", api.Path, api.Method)
 	}
 	return nil
 }
@@ -74,7 +74,7 @@ func responseError(c *gin.Context, statusCode int, errorMessage string, params m
 	c.JSON(statusCode, responseData)
 }
 
-func generateHandler(api API) gin.HandlerFunc {
+func generateHandler(api api) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var params map[string]interface{}
 
@@ -101,9 +101,9 @@ func generateHandler(api API) gin.HandlerFunc {
 
 func validateJSON(data map[string]interface{}, schemaFilePath string) error {
 	// Read the JSON schema from the file
-	schemaContent, err := os.ReadFile(ConfigPath + "/" + schemaFilePath)
+	schemaContent, err := os.ReadFile(configBasePath + "/" + schemaFilePath)
 	if err != nil {
-		Log.Error("Missing JSON schema", err)
+		logError("Missing JSON schema", err)
 		return err
 	}
 

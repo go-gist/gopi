@@ -8,15 +8,15 @@ import (
 	"gopkg.in/natefinch/lumberjack.v2"
 )
 
-var Log *logrus.Logger
+var log *logrus.Logger
 
 func init() {
 	// Initialize the logger
-	Log = logrus.New()
+	log = logrus.New()
 
 	// Set up log rotation
-	Log.SetOutput(&lumberjack.Logger{
-		Filename:   "restql.log", // Log file name
+	log.SetOutput(&lumberjack.Logger{
+		Filename:   "restql.log", // log file name
 		MaxSize:    10,           // Maximum size in megabytes before rotating
 		MaxBackups: 3,            // Maximum number of backup files
 		MaxAge:     28,           // Maximum number of days to retain old log files
@@ -24,27 +24,27 @@ func init() {
 	})
 
 	// Optionally set log formatter
-	Log.SetFormatter(&logrus.TextFormatter{
+	log.SetFormatter(&logrus.TextFormatter{
 		FullTimestamp: true,
 	})
 
 	// Set log level if needed
-	Log.SetLevel(logrus.InfoLevel)
+	log.SetLevel(logrus.InfoLevel)
 }
 
-func LogError(args ...interface{}) {
+func logError(args ...interface{}) {
 	var stringArgs []string
 	for _, arg := range args {
 		stringArgs = append(stringArgs, fmt.Sprint(arg))
 	}
 	message := strings.Join(stringArgs, " | ")
-	Log.Error("RESTQL | " + message)
+	log.Error("RESTQL | " + message)
 }
-func LogInfo(args ...interface{}) {
+func logInfo(args ...interface{}) {
 	var stringArgs []string
 	for _, arg := range args {
 		stringArgs = append(stringArgs, fmt.Sprint(arg))
 	}
 	message := strings.Join(stringArgs, " | ")
-	Log.Info("RESTQL | " + message)
+	log.Info("RESTQL | " + message)
 }

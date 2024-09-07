@@ -1,13 +1,13 @@
 package restql
 
 func parseQueryFile(path string, data map[string]interface{}) (string, error) {
-	templateFromFile, err := LoadTemplateFromFile(path)
+	templateFromFile, err := loadTemplateFromFile(path)
 	if err != nil {
-		LogError("Failed to load DB query file", err.Error())
+		logError("Failed to load DB query file", err.Error())
 		return "", err
 	}
 
-	output, err := ExecuteTemplate(templateFromFile, data)
+	output, err := executeTemplate(templateFromFile, data)
 	if err != nil {
 		return "", err
 	}

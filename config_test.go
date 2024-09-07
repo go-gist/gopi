@@ -36,15 +36,15 @@ func TestReadConfig(t *testing.T) {
 	// Assert the correct number of APIs are loaded
 	assert.Len(t, config.APIs, len(expectedAPIs), "Unexpected number of APIs")
 
-	// Check each API against the expected values
+	// Check each api against the expected values
 	for i, expectedAPI := range expectedAPIs {
 		api := config.APIs[i]
 
-		t.Run(fmt.Sprintf("API #%d", i), func(t *testing.T) {
-			assert.Equal(t, expectedAPI.Name, api.Name, "Unexpected API name")
-			assert.Equal(t, expectedAPI.Path, api.Path, "Unexpected API path")
-			assert.Equal(t, expectedAPI.Method, api.Method, "Unexpected API method")
-			assert.Equal(t, expectedAPI.Description, api.Description, "Unexpected API description")
+		t.Run(fmt.Sprintf("api #%d", i), func(t *testing.T) {
+			assert.Equal(t, expectedAPI.Name, api.Name, "Unexpected api name")
+			assert.Equal(t, expectedAPI.Path, api.Path, "Unexpected api path")
+			assert.Equal(t, expectedAPI.Method, api.Method, "Unexpected api method")
+			assert.Equal(t, expectedAPI.Description, api.Description, "Unexpected api description")
 		})
 	}
 }
@@ -63,10 +63,10 @@ func TestGetAPIs(t *testing.T) {
 	assert.Len(t, apis, len(config.APIs), "Unexpected number of APIs")
 
 	for i, api := range apis {
-		t.Run(fmt.Sprintf("API #%d", i), func(t *testing.T) {
-			assert.NotEmpty(t, api.Name, "API name should not be empty")
-			assert.NotEmpty(t, api.Path, "API path should not be empty")
-			assert.NotEmpty(t, api.Method, "API method should not be empty")
+		t.Run(fmt.Sprintf("api #%d", i), func(t *testing.T) {
+			assert.NotEmpty(t, api.Name, "api name should not be empty")
+			assert.NotEmpty(t, api.Path, "api path should not be empty")
+			assert.NotEmpty(t, api.Method, "api method should not be empty")
 		})
 	}
 }
