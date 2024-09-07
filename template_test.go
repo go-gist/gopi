@@ -7,7 +7,7 @@ import (
 
 func TestLoadTemplateFromFile(t *testing.T) {
 	// Path to the existing template file
-	templateFilePath := "./test/data/input_template_test.sql.tpl"
+	templateFilePath := "./test/data/query.sql.tpl"
 
 	// Test loading the template from the existing file
 	templateFromFile, err := LoadTemplateFromFile(templateFilePath)
@@ -33,7 +33,7 @@ func TestLoadTemplateFromFile(t *testing.T) {
 	}
 
 	// Read the expected output from the file
-	expectedOutputFilePath := "./test/data/output_template_test.sql"
+	expectedOutputFilePath := "./test/data/query.sql"
 	expectedOutput, err := os.ReadFile(expectedOutputFilePath)
 	if err != nil {
 		t.Fatalf("Failed to read expected output file: %v", err)

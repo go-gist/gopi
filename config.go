@@ -23,6 +23,7 @@ func GetAPIConfig(filename string) (*APIConfig, error) {
 	config := &APIConfig{}
 	err = yaml.Unmarshal(file, config)
 	if err != nil {
+		Log.Error(err)
 		return nil, err
 	}
 

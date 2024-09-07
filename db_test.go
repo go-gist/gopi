@@ -6,13 +6,13 @@ import (
 )
 
 func TestParseQueryFile(t *testing.T) {
-	path := "./test/data/input_template_test.sql.tpl"
+	path := "./test/data/query.sql.tpl"
 	data := map[string]interface{}{
 		"TableName": "example_table",
 		"Condition": "column = 'value'",
 	}
 
-	expectedOutputFilePath := "./test/data/output_template_test.sql"
+	expectedOutputFilePath := "./test/data/query.sql"
 	expectedOutput, err := os.ReadFile(expectedOutputFilePath)
 	if err != nil {
 		t.Fatalf("Failed to read expected output file: %v", err)

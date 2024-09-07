@@ -15,3 +15,5 @@ apis:
     path: "/foo"
     method: "POST"
     description: "Creates a foo item"
+    payload:
+      schema: "payload_schema.json"

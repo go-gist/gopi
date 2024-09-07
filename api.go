@@ -19,9 +19,9 @@ type API struct {
 	Method      string `yaml:"method" json:"method"`
 	Description string `yaml:"description" json:"description"`
 
-	Input *struct {
+	Payload *struct {
 		Schema string `yaml:"schema" json:"schema"`
-	} `yaml:"input" json:"input"`
+	} `yaml:"payload" json:"payload"`
 
 	DB *struct {
 		Query string `yaml:"query" json:"query"`
@@ -79,7 +79,7 @@ func generateHandler(api API) gin.HandlerFunc {
 		}
 
 		// Validate JSON payload against the schema
-		err := validateJSON(params, api.Input.Schema)
+		err := validateJSON(params, api.Payload.Schema)
 		if err != nil {
 			responseError(c, http.StatusBadRequest, err.Error(), params)
 			return
@@ -98,6 +98,7 @@ func validateJSON(data map[string]interface{}, schemaFilePath string) error {
 	// Read the JSON schema from the file
 	schemaContent, err := os.ReadFile(schemaFilePath)
 	if err != nil {
+		Log.Error("Missing JSON schema", err)
 		return err
 	}
 
