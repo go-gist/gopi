@@ -1,6 +1,9 @@
 package restql
 
 import (
+	"fmt"
+	"strings"
+
 	"github.com/sirupsen/logrus"
 	"gopkg.in/natefinch/lumberjack.v2"
 )
@@ -27,4 +30,21 @@ func init() {
 
 	// Set log level if needed
 	Log.SetLevel(logrus.InfoLevel)
+}
+
+func LogError(args ...interface{}) {
+	var stringArgs []string
+	for _, arg := range args {
+		stringArgs = append(stringArgs, fmt.Sprint(arg))
+	}
+	message := strings.Join(stringArgs, " | ")
+	Log.Error("RESTQL | " + message)
+}
+func LogInfo(args ...interface{}) {
+	var stringArgs []string
+	for _, arg := range args {
+		stringArgs = append(stringArgs, fmt.Sprint(arg))
+	}
+	message := strings.Join(stringArgs, " | ")
+	Log.Info("RESTQL | " + message)
 }

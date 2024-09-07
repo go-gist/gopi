@@ -17,15 +17,18 @@ type APIConfig struct {
 func GetAPIConfig(filename string) (*APIConfig, error) {
 	file, err := os.ReadFile(filename)
 	if err != nil {
+		LogError("Configuration read failed", err.Error())
 		return nil, err
 	}
 
 	config := &APIConfig{}
 	err = yaml.Unmarshal(file, config)
 	if err != nil {
-		Log.Error(err)
+		LogError("Configuration parsing failed", err.Error())
 		return nil, err
 	}
+
+	LogInfo("Configuration parsing completed", filename)
 
 	return config, nil
 }

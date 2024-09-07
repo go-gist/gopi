@@ -38,8 +38,11 @@ func GenerateAPI(api API, service APIService) error {
 	method := api.Method
 	path := api.Path
 
+	if path == "" {
+		return errors.New("missing path in API config")
+	}
 	if method == "" {
-		return errors.New("missing path in API object")
+		return errors.New("missing method in API config")
 	}
 	return service.Handle(method, path, generateHandler(api))
 }
@@ -50,8 +53,10 @@ func GenerateAPIs(apis []API, service APIService) error {
 	for _, api := range apis {
 		err := GenerateAPI(api, service)
 		if err != nil {
+			LogError("Failed to generate API", api.Path, err.Error())
 			return err
 		}
+		LogInfo("Generated API", api.Path, api.Method)
 	}
 	return nil
 }
