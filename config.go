@@ -3,6 +3,7 @@
 package restql
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 
@@ -19,7 +20,7 @@ var configBasePath string
 // readConfig reads the YAML configuration file
 func GetAPIConfig(filename string) (*apiConfig, error) {
 	file, err := os.ReadFile(filename)
-	configBasePath = filepath.Dir(filename)
+	configBasePath = fmt.Sprintf("%s/", filepath.Dir(filename))
 	if err != nil {
 		logError("Configuration read failed", err.Error())
 		return nil, err

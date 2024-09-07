@@ -6,10 +6,9 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
-	"os"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"github.com/xeipuuv/gojsonschema"
 )
 
 // api defines the structure for an api object.
@@ -18,6 +17,10 @@ type api struct {
 	Path        string `yaml:"path" json:"path"`
 	Method      string `yaml:"method" json:"method"`
 	Description string `yaml:"description" json:"description"`
+
+	Query *struct {
+		Schema string `yaml:"schema" json:"schema"`
+	} `yaml:"query" json:"query"`
 
 	Payload *struct {
 		Schema string `yaml:"schema" json:"schema"`
@@ -63,31 +66,57 @@ func GenerateAPIs(apis []api, service apiService) error {
 
 func generateResponseData(jsonParams map[string]interface{}) gin.H {
 	return gin.H{
-		"json": jsonParams,
+		"params": jsonParams,
 	}
 }
 
-func responseError(c *gin.Context, statusCode int, errorMessage string, params map[string]interface{}) {
+func responseError(c *gin.Context, statusCode int, errors []ValidationError, params map[string]interface{}) {
+	// Prepare the response data with errors as a slice of ValidationError
 	responseData := generateResponseData(params)
-	responseData["error"] = errorMessage
+	responseData["errors"] = errors
 
 	c.JSON(statusCode, responseData)
 }
 
 func generateHandler(api api) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var params map[string]interface{}
+		queryParams := make(map[string]interface{})
+		for key, values := range c.Request.URL.Query() {
+			value := values[0]
+			if intValue, err := strconv.Atoi(value); err == nil {
+				queryParams[key] = intValue
+			} else if floatValue, err := strconv.ParseFloat(value, 64); err == nil {
+				queryParams[key] = floatValue
+			} else if boolValue, err := strconv.ParseBool(value); err == nil {
+				queryParams[key] = boolValue
+			} else {
+				queryParams[key] = value
+			}
+		}
 
-		if err := c.ShouldBindJSON(&params); err != nil {
-			responseError(c, http.StatusBadRequest, err.Error(), params)
+		if api.Query != nil && api.Query.Schema != "" {
+			errors := validateJSON(queryParams, api.Query.Schema)
+			if len(errors) > 0 {
+				responseError(c, http.StatusBadRequest, errors, queryParams)
+				return
+			}
+		}
+
+		var params map[string]interface{}
+		if err := c.ShouldBindJSON(&params); len(params) > 0 && err != nil {
+			responseError(c, http.StatusBadRequest, []ValidationError{{
+				Key:     "body",
+				Message: err.Error(),
+			}}, params)
 			return
 		}
 
-		// Validate JSON payload against the schema
-		err := validateJSON(params, api.Payload.Schema)
-		if err != nil {
-			responseError(c, http.StatusBadRequest, err.Error(), params)
-			return
+		if api.Payload != nil && api.Payload.Schema != "" {
+			errors := validateJSON(params, api.Payload.Schema)
+			if len(errors) > 0 {
+				responseError(c, http.StatusBadRequest, errors, params)
+				return
+			}
 		}
 
 		if api.DB != nil {
@@ -97,32 +126,4 @@ func generateHandler(api api) gin.HandlerFunc {
 		responseData := generateResponseData(params)
 		c.JSON(http.StatusOK, responseData)
 	}
-}
-
-func validateJSON(data map[string]interface{}, schemaFilePath string) error {
-	// Read the JSON schema from the file
-	schemaContent, err := os.ReadFile(configBasePath + "/" + schemaFilePath)
-	if err != nil {
-		logError("Missing JSON schema", err)
-		return err
-	}
-
-	loader := gojsonschema.NewStringLoader(string(schemaContent))
-	document := gojsonschema.NewGoLoader(data)
-
-	result, err := gojsonschema.Validate(loader, document)
-	if err != nil {
-		return err
-	}
-
-	if !result.Valid() {
-		// Handle validation errors
-		var errors []string
-		for _, err := range result.Errors() {
-			errors = append(errors, err.String())
-		}
-		return fmt.Errorf("JSON schema validation failed: %v", errors)
-	}
-
-	return nil
 }

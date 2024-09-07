@@ -1,5 +1,3 @@
-// api_test.go
-
 package restql
 
 import (

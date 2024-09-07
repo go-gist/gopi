@@ -10,6 +10,8 @@ apis:
     path: "/foo"
     method: "GET"
     description: "Get an item"
+    query:
+      schema: "foo_query_schema.json"
 
   - name: "Bar"
     path: "/bar"
