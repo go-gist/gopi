@@ -1,12 +1,7 @@
-// api.go
-
 package restql
 
 import (
 	"errors"
-	"fmt"
-	"net/http"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -76,54 +71,4 @@ func responseError(c *gin.Context, statusCode int, errors []ValidationError, par
 	responseData["errors"] = errors
 
 	c.JSON(statusCode, responseData)
-}
-
-func generateHandler(api api) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		queryParams := make(map[string]interface{})
-		for key, values := range c.Request.URL.Query() {
-			value := values[0]
-			if intValue, err := strconv.Atoi(value); err == nil {
-				queryParams[key] = intValue
-			} else if floatValue, err := strconv.ParseFloat(value, 64); err == nil {
-				queryParams[key] = floatValue
-			} else if boolValue, err := strconv.ParseBool(value); err == nil {
-				queryParams[key] = boolValue
-			} else {
-				queryParams[key] = value
-			}
-		}
-
-		if api.Query != nil && api.Query.Schema != "" {
-			errors := validateJSON(queryParams, api.Query.Schema)
-			if len(errors) > 0 {
-				responseError(c, http.StatusBadRequest, errors, queryParams)
-				return
-			}
-		}
-
-		var params map[string]interface{}
-		if err := c.ShouldBindJSON(&params); len(params) > 0 && err != nil {
-			responseError(c, http.StatusBadRequest, []ValidationError{{
-				Key:     "body",
-				Message: err.Error(),
-			}}, params)
-			return
-		}
-
-		if api.Payload != nil && api.Payload.Schema != "" {
-			errors := validateJSON(params, api.Payload.Schema)
-			if len(errors) > 0 {
-				responseError(c, http.StatusBadRequest, errors, params)
-				return
-			}
-		}
-
-		if api.DB != nil {
-			fmt.Println()
-		}
-
-		responseData := generateResponseData(params)
-		c.JSON(http.StatusOK, responseData)
-	}
 }

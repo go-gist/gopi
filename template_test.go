@@ -22,11 +22,9 @@ func TestLoadTemplateFromFile(t *testing.T) {
 
 	// Define data to be used by the template
 	data := map[string]interface{}{
-		"TableName": "employees",
-		"Filters": []string{
-			"department = 'HR'",
-			"hire_date >= '2023-01-01'",
-		},
+		"TableName": "users",
+		"Start":     0,
+		"Size":      2,
 	}
 	// Execute the template with the provided data
 	output, err := executeTemplate(templateFromFile, data)
