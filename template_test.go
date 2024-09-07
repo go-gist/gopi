@@ -7,7 +7,7 @@ import (
 
 func TestLoadTemplateFromFile(t *testing.T) {
 	// Path to the existing template file
-	templateFilePath := "./test/data/query.sql.tpl"
+	templateFilePath := "./test/data/foo.sql.tpl"
 
 	// Test loading the template from the existing file
 	templateFromFile, err := LoadTemplateFromFile(templateFilePath)
@@ -22,10 +22,12 @@ func TestLoadTemplateFromFile(t *testing.T) {
 
 	// Define data to be used by the template
 	data := map[string]interface{}{
-		"TableName": "example_table",
-		"Condition": "column = 'value'",
+		"TableName": "employees",
+		"Filters": []string{
+			"department = 'HR'",
+			"hire_date >= '2023-01-01'",
+		},
 	}
-
 	// Execute the template with the provided data
 	output, err := ExecuteTemplate(templateFromFile, data)
 	if err != nil {
@@ -33,7 +35,7 @@ func TestLoadTemplateFromFile(t *testing.T) {
 	}
 
 	// Read the expected output from the file
-	expectedOutputFilePath := "./test/data/query.sql"
+	expectedOutputFilePath := "./test/data/foo.sql"
 	expectedOutput, err := os.ReadFile(expectedOutputFilePath)
 	if err != nil {
 		t.Fatalf("Failed to read expected output file: %v", err)

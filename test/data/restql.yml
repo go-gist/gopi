@@ -17,3 +17,8 @@ apis:
     description: "Creates an item"
     payload:
       schema: "payload_schema.json"
+    actions:
+      - type: "db"
+        query: query.sql.tpl
+      - type: "db"
+        query: query.sql.tpl

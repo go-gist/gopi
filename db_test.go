@@ -6,23 +6,34 @@ import (
 )
 
 func TestParseQueryFile(t *testing.T) {
-	path := "./test/data/query.sql.tpl"
+	// Path to the SQL template
+	path := "./test/data/foo.sql.tpl"
+
+	// Data to be injected into the template
 	data := map[string]interface{}{
-		"TableName": "example_table",
-		"Condition": "column = 'value'",
+		"TableName": "employees",
+		"Filters": []string{
+			"department = 'HR'",
+			"hire_date >= '2023-01-01'",
+		},
 	}
 
-	expectedOutputFilePath := "./test/data/query.sql"
+	// Path to the file containing the expected output
+	expectedOutputFilePath := "./test/data/foo.sql"
+
+	// Read the expected output from file
 	expectedOutput, err := os.ReadFile(expectedOutputFilePath)
 	if err != nil {
 		t.Fatalf("Failed to read expected output file: %v", err)
 	}
 
+	// Parse the query file with the provided data
 	output, err := parseQueryFile(path, data)
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
 
+	// Compare the actual output with the expected output
 	if output != string(expectedOutput) {
 		t.Errorf("Expected output: %s, Got: %s", expectedOutput, output)
 	}
