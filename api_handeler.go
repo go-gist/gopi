@@ -43,15 +43,15 @@ func generateHandler(api api, db dbConnection) gin.HandlerFunc {
 
 		for _, action := range api.Actions {
 			if action.Type == "db" {
-				err := handleDBOperation(action, combinedData, db)
+				data, err := handleDBOperation(action, combinedData, db)
 				if err != nil {
 					logError("DB query failed", err.Error())
 				}
+				responseData := generateResponseData(data)
+				c.JSON(http.StatusOK, responseData)
 			}
 		}
 
-		responseData := generateResponseData(params)
-		c.JSON(http.StatusOK, responseData)
 	}
 }
 

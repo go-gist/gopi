@@ -34,5 +34,5 @@ func SQLDisconnect(db *sql.DB) {
 
 // Query executes a query and returns rows and an error
 func (db *SQL) Query(query string, args ...interface{}) (*sql.Rows, error) {
-	return db.Connection.Query(query, args)
+	return db.Connection.Query(query, args...)
 }

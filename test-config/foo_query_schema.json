@@ -5,13 +5,13 @@
     "size": {
       "type": "number",
       "description": "Number of records to fetch",
-      "minimum": 1,
+      "minimum": 10,
       "maximum": 1000
     },
     "start": {
       "type": "number",
       "description": "Current start number",
-      "minimum": 1,
+      "minimum": 0,
       "maximum": 5
     }
   },

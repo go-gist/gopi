@@ -83,7 +83,7 @@ func GenerateAPIs(apis []api, service apiService, db dbConnection) error {
 	return nil
 }
 
-func generateResponseData(jsonParams map[string]interface{}) gin.H {
+func generateResponseData(jsonParams interface{}) gin.H {
 	return gin.H{
 		"params": jsonParams,
 	}
