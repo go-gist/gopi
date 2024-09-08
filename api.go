@@ -32,7 +32,7 @@ type apiService interface {
 }
 
 // generateAPI takes an api object containing properties such as path, method, etc., and an apiService object.
-func generateAPI(api api, service apiService) error {
+func generateAPI(api api, service apiService, db dbConnection) error {
 	method := api.Method
 	path := api.Path
 
@@ -42,14 +42,14 @@ func generateAPI(api api, service apiService) error {
 	if method == "" {
 		return errors.New("missing method in api config")
 	}
-	return service.Handle(method, path, generateHandler(api))
+	return service.Handle(method, path, generateHandler(api, db))
 }
 
 // GenerateAPIs takes an array of api objects and an apiService object,
 // and generates handlers for each api using the provided apiService.
-func GenerateAPIs(apis []api, service apiService) error {
+func GenerateAPIs(apis []api, service apiService, db dbConnection) error {
 	for _, api := range apis {
-		err := generateAPI(api, service)
+		err := generateAPI(api, service, db)
 		if err != nil {
 			logError("Failed to generate api", api.Path, err.Error())
 			return err

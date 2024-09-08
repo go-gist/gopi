@@ -1,5 +1,11 @@
 package restql
 
+import "database/sql"
+
+type dbConnection interface {
+	Query(query string, args ...interface{}) (*sql.Rows, error)
+}
+
 func parseQueryFile(path string, data map[string]interface{}) (string, error) {
 	templateFromFile, err := loadTemplateFromFile(path)
 	if err != nil {

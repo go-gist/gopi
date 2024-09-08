@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func generateHandler(api api) gin.HandlerFunc {
+func generateHandler(api api, db dbConnection) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		queryParams := parseQueryParams(c.Request.URL.Query())
 
