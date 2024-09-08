@@ -2,6 +2,8 @@ package restql
 
 import (
 	"database/sql"
+
+	_ "github.com/go-sql-driver/mysql"
 )
 
 type SQL struct {
@@ -11,10 +13,12 @@ type SQL struct {
 func SQLConnect(connectionString string) (*sql.DB, error) {
 	db, err := sql.Open("mysql", connectionString)
 	if err != nil {
+		logError("Unable to connect to database", connectionString, err.Error())
 		return nil, err
 	}
 
 	if err := db.Ping(); err != nil {
+		logError("Unable to connect to database", connectionString, err.Error())
 		db.Close()
 		return nil, err
 	}
@@ -30,5 +34,5 @@ func SQLDisconnect(db *sql.DB) {
 
 // Query executes a query and returns rows and an error
 func (db *SQL) Query(query string, args ...interface{}) (*sql.Rows, error) {
-	return db.Connection.Query(query, args...)
+	return db.Connection.Query(query, args)
 }

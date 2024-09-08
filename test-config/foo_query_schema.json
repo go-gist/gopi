@@ -8,12 +8,12 @@
       "minimum": 1,
       "maximum": 1000
     },
-    "page": {
+    "start": {
       "type": "number",
-      "description": "Current page number",
+      "description": "Current start number",
       "minimum": 1,
       "maximum": 5
     }
   },
-  "required": ["size", "page"]
+  "required": ["size", "start"]
 }

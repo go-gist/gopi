@@ -6,8 +6,8 @@ import (
 
 func TestValidateJSON_ValidData(t *testing.T) {
 	params := map[string]interface{}{
-		"size": 10,
-		"page": 2,
+		"size":  10,
+		"start": 2,
 	}
 
 	schemaPath := "test-config/foo_query_schema.json"
@@ -20,14 +20,14 @@ func TestValidateJSON_ValidData(t *testing.T) {
 
 func TestValidateJSON_MissingRequiredFields(t *testing.T) {
 	params := map[string]interface{}{
-		"size": 10, // Missing "page"
+		"size": 10, // Missing "start"
 	}
 
 	schemaPath := "./test-config/foo_query_schema.json"
 	errors := validateJSON(params, schemaPath)
 
 	expectedErrors := []ValidationError{
-		{Key: "(root)", Message: "(root): page is required"},
+		{Key: "(root)", Message: "(root): start is required"},
 	}
 
 	if len(errors) == 0 {
@@ -47,8 +47,8 @@ func TestValidateJSON_MissingRequiredFields(t *testing.T) {
 
 func TestValidateJSON_InvalidFieldTypes(t *testing.T) {
 	params := map[string]interface{}{
-		"size": "ten", // Invalid type
-		"page": 2,
+		"size":  "ten", // Invalid type
+		"start": 2,
 	}
 
 	schemaPath := "test-config/foo_query_schema.json"
@@ -75,8 +75,8 @@ func TestValidateJSON_InvalidFieldTypes(t *testing.T) {
 
 func TestValidateJSON_FieldValuesOutOfRange(t *testing.T) {
 	params := map[string]interface{}{
-		"size": 1001, // Out of range
-		"page": 2,
+		"size":  1001, // Out of range
+		"start": 2,
 	}
 
 	schemaPath := "./test-config/foo_query_schema.json"
@@ -104,7 +104,7 @@ func TestValidateJSON_FieldValuesOutOfRange(t *testing.T) {
 func TestValidateJSON_ExtraFields(t *testing.T) {
 	params := map[string]interface{}{
 		"size":  10,
-		"page":  2,
+		"start": 2,
 		"extra": "value", // Extra field
 	}
 

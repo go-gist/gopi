@@ -1,6 +1,6 @@
-SELECT 
+SELECT       
 	*
 FROM 
-	{{.TableName}}
+	users
 LIMIT
-	{{.Start}}, {{.Size}}
+	{{.start}}, {{.size}}

@@ -12,15 +12,13 @@ apis:
     description: "Get an item"
     query:
       schema: "foo_query_schema.json"
-
+    actions:
+      - type: "db"
+        query: foo.sql.tpl
   - name: "Bar"
     path: "/bar"
     method: "POST"
     description: "Creates an item"
     payload:
       schema: "payload_schema.json"
-    actions:
-      - type: "db"
-        query: query.sql.tpl
-      - type: "db"
-        query: query.sql.tpl
+    

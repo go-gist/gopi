@@ -1,12 +1,16 @@
 package restql
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
+
+type RequestData struct {
+	QueryParams map[string]interface{}
+	Params      map[string]interface{}
+}
 
 func generateHandler(api api, db dbConnection) gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -35,8 +39,15 @@ func generateHandler(api api, db dbConnection) gin.HandlerFunc {
 			}
 		}
 
-		if api.DB != nil {
-			handleDatabaseOperation()
+		combinedData := mergeMaps(queryParams, params)
+
+		for _, action := range api.Actions {
+			if action.Type == "db" {
+				err := handleDBOperation(action, combinedData, db)
+				if err != nil {
+					logError("DB query failed", err.Error())
+				}
+			}
 		}
 
 		responseData := generateResponseData(params)
@@ -90,6 +101,13 @@ func bindRequestBody(c *gin.Context) (map[string]interface{}, error) {
 	return params, err
 }
 
-func handleDatabaseOperation() {
-	fmt.Println()
+func mergeMaps(map1, map2 map[string]interface{}) map[string]interface{} {
+	result := make(map[string]interface{})
+	for k, v := range map1 {
+		result[k] = v
+	}
+	for k, v := range map2 {
+		result[k] = v
+	}
+	return result
 }

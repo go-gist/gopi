@@ -48,3 +48,7 @@ func GetAPIs(config *apiConfig) []api {
 
 	return apis
 }
+
+func getConfigFullPath(filename string) string {
+	return fmt.Sprintf("%s%s", configBasePath, filename)
+}

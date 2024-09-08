@@ -2,11 +2,18 @@ package restql
 
 import (
 	"errors"
+	"os"
+	"text/template"
 
 	"github.com/gin-gonic/gin"
 )
 
-// api defines the structure for an api object.
+type action struct {
+	Type          string `yaml:"type" json:"type"`
+	Query         string `yaml:"query" json:"query"`
+	queryTemplate *template.Template
+}
+
 type api struct {
 	Name        string `yaml:"name" json:"name"`
 	Path        string `yaml:"path" json:"path"`
@@ -24,6 +31,8 @@ type api struct {
 	DB *struct {
 		Query string `yaml:"query" json:"query"`
 	} `yaml:"db" json:"db"`
+
+	Actions []action `yaml:"actions" json:"actions"`
 }
 
 // apiService defines the interface for a service that can handle api requests.
@@ -42,6 +51,21 @@ func generateAPI(api api, service apiService, db dbConnection) error {
 	if method == "" {
 		return errors.New("missing method in api config")
 	}
+
+	for i, action := range api.Actions {
+		if action.Type == "db" {
+			content, err := os.ReadFile(getConfigFullPath(action.Query))
+			if err != nil {
+				return err
+			}
+			queryTemplate, err := template.New(action.Query).Parse(string(content))
+			if err != nil {
+				return err
+			}
+			api.Actions[i].queryTemplate = queryTemplate
+		}
+	}
+
 	return service.Handle(method, path, generateHandler(api, db))
 }
 
