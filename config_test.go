@@ -1,6 +1,6 @@
 // config_test.go
 
-package restql
+package rest
 
 import (
 	"fmt"
@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-const filename = "./test-config/restql.yml"
+const filename = "./test-config/rest.yml"
 
 func TestGetAPIs(t *testing.T) {
 	// Read the configuration

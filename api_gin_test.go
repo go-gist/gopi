@@ -1,6 +1,6 @@
 // api_gin_test.go
 
-package restql
+package rest
 
 import (
 	"errors"

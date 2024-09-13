@@ -1,4 +1,4 @@
-module github.com/gogean/restql
+module github.com/gogean/rest
 
 go 1.21.5
 

@@ -1,4 +1,4 @@
-package restql
+package rest
 
 import (
 	"errors"
@@ -7,33 +7,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 )
-
-type action struct {
-	Type          string `yaml:"type" json:"type"`
-	Query         string `yaml:"query" json:"query"`
-	queryTemplate *template.Template
-}
-
-type api struct {
-	Name        string `yaml:"name" json:"name"`
-	Path        string `yaml:"path" json:"path"`
-	Method      string `yaml:"method" json:"method"`
-	Description string `yaml:"description" json:"description"`
-
-	Query *struct {
-		Schema string `yaml:"schema" json:"schema"`
-	} `yaml:"query" json:"query"`
-
-	Payload *struct {
-		Schema string `yaml:"schema" json:"schema"`
-	} `yaml:"payload" json:"payload"`
-
-	DB *struct {
-		Query string `yaml:"query" json:"query"`
-	} `yaml:"db" json:"db"`
-
-	Actions []action `yaml:"actions" json:"actions"`
-}
 
 // apiService defines the interface for a service that can handle api requests.
 type apiService interface {

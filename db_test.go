@@ -1,1 +1,1 @@
-package restql
+package rest

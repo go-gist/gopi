@@ -1,6 +1,6 @@
 // config.go
 
-package restql
+package rest
 
 import (
 	"fmt"
@@ -11,20 +11,17 @@ import (
 )
 
 // apiConfig represents the structure of the YAML configuration file
-type apiConfig struct {
-	APIs []api `yaml:"apis"`
-}
 
 var configBasePath string
 
 // readConfig reads the YAML configuration file
 func GetAPIConfig(filename string) (*apiConfig, error) {
 	file, err := os.ReadFile(filename)
-	configBasePath = fmt.Sprintf("%s/", filepath.Dir(filename))
 	if err != nil {
 		logError("Configuration read failed", err.Error())
 		return nil, err
 	}
+	configBasePath = fmt.Sprintf("%s/", filepath.Dir(filename))
 
 	config := &apiConfig{}
 	err = yaml.Unmarshal(file, config)

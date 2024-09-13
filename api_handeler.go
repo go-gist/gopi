@@ -1,4 +1,4 @@
-package restql
+package rest
 
 import (
 	"net/http"
