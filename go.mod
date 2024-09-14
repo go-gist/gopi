@@ -11,10 +11,7 @@ require (
 	gopkg.in/yaml.v2 v2.4.0
 )
 
-require (
-	filippo.io/edwards25519 v1.1.0 // indirect
-	github.com/knz/go-libedit v1.10.1 // indirect
-)
+require filippo.io/edwards25519 v1.1.0 // indirect
 
 require (
 	github.com/bytedance/sonic v1.12.2 // indirect

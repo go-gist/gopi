@@ -8,7 +8,6 @@ apis:
     actions:
       - type: "db"
         query: foo.sql.tpl
-
   - name: "Bar"
     path: "/bar"
     method: "POST"

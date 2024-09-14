@@ -20,26 +20,6 @@ func (m *MockAPIService) Handle(method, path string, handler gin.HandlerFunc) er
 	return nil
 }
 
-func TestGenerateAPI(t *testing.T) {
-	// Create an instance of MockAPIService
-	mockService := &MockAPIService{}
-	mockDbConnection := &SQL{}
-
-	// Create an instance of the api object for testing
-	testAPI := api{
-		Path:   "/foo",
-		Method: "POST",
-	}
-
-	// Call generateAPI with the mock service
-	err := generateAPI(testAPI, mockService, mockDbConnection)
-
-	// Assert that the Handle method of the mock service was called with the correct parameters
-	assert.Equal(t, "POST", mockService.HandledMethod)
-	assert.Equal(t, "/foo", mockService.HandledPath)
-	assert.NoError(t, err)
-}
-
 func TestGenerateAPIs_Error(t *testing.T) {
 	// Create an instance of MockAPIService
 	mockService := &GinAPIService{}

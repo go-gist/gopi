@@ -38,7 +38,7 @@ func logError(args ...interface{}) {
 		stringArgs = append(stringArgs, fmt.Sprint(arg))
 	}
 	message := strings.Join(stringArgs, " | ")
-	log.Error("RESTQL | " + message)
+	log.Error("GOGEAN | " + message)
 }
 func logInfo(args ...interface{}) {
 	var stringArgs []string
@@ -46,5 +46,5 @@ func logInfo(args ...interface{}) {
 		stringArgs = append(stringArgs, fmt.Sprint(arg))
 	}
 	message := strings.Join(stringArgs, " | ")
-	log.Info("RESTQL | " + message)
+	log.Info("GOGEAN | " + message)
 }
